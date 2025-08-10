@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Your Image</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #e3b5ca;
+            color: #333;
+        }
+
+        header {
+            background-color: #ffe8e0;
+            color: black;
+            padding: 15px 20px;
+            text-align: center;
+            font-size: 1.5em;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #ffe8e0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h2 {
+            text-align: center;
+            color: black;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.1em;
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        .upload-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .upload-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: rgb(184, 75, 184);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .upload-button:hover {
+            background-color: rgb(184, 75, 184);
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .preview-section {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .preview-section img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .analysis-button {
+            display: none; /* Hidden by default */
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: rgb(184, 75, 184);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .analysis-button:hover {
+            background-color: rgb(184, 75, 184);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .tips-section {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-top: 30px;
+            border-radius: 8px;
+        }
+
+        .tips-section h3 {
+            color: black;
+        }
+
+        .tips-section ul {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+
+        .tips-section ul li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        Upload Your Image for Analysis
+    </header>
+
+    <div class="container">
+        <h2>Upload Your Photo</h2>
+        <p>Please upload a clear photo to proceed with the analysis. Ensure the image meets the guidelines provided.</p>
+
+        <div class="upload-section">
+            <label class="upload-button" for="fileInput">Select Image</label>
+            <input type="file" id="fileInput" accept="image/*">
+        </div>
+
+        <div class="preview-section" id="previewSection">
+            <p id="noPreviewText">No image uploaded yet. Your image preview will appear here.</p>
+        </div>
+
+        <button class="analysis-button" id="analysisButton" onclick="window.location.href='./result.html';">Do Analysis</button>
+
+        <div class="upload-section">
+            <input type="file" id="fileInput" accept="image/*">
+            <button class="upload-button" id="uploadButton" style="margin-top: 10px;">Upload</button>
+            <p class="message" id="uploadMessage" style="display: none;">Uploaded Successfully!</p>
+        </div>
+
+
+        <div class="tips-section">
+            <h3>Photo Guidelines</h3>
+            <ul>
+                <li>Ensure your face is well-lit and clearly visible.</li>
+                <li>Avoid wearing makeup for accurate results.</li>
+                <li>Remove glasses and keep your hair away from your face.</li>
+                <li>Upload a high-quality photo for better analysis.</li>
+            </ul>
+        </div>
+    </div>
+
+    <footer>
+        &copy; Beautelligent. All rights reserved.
+    </footer>
+
+    <script>
+        const fileInput = document.getElementById('fileInput'); // File input element
+const uploadButton = document.getElementById('uploadButton'); // Upload button (if needed)
+const previewSection = document.getElementById('previewSection'); // Preview area
+const noPreviewText = document.getElementById('noPreviewText'); // Placeholder text
+const analysisButton = document.getElementById('analysisButton'); // "Do Analysis" button
+
+// Preview and Save Image to LocalStorage
+fileInput.addEventListener('change', function () {
+    const file = this.files[0]; // Get the selected file
+    if (file) {
+        const reader = new FileReader(); // Create a FileReader to read the file
+        reader.onload = function (e) {
+            const imageData = e.target.result; // Get the image data as base64
+
+            noPreviewText.style.display = 'none'; // Hide the "No Preview" text
+
+            // Show the image preview in the preview section
+            const img = document.createElement('img');
+            img.src = imageData;
+            img.alt = 'Uploaded Image';
+            previewSection.innerHTML = ''; // Clear previous content
+            previewSection.appendChild(img);
+
+            // Save the image data to localStorage for the next page
+            localStorage.setItem('uploadedImage', imageData);
+
+            // Show the "Do Analysis" button
+            analysisButton.style.display = 'block';
+        };
+        reader.readAsDataURL(file); // Convert the file to base64 format
+    }
+});
+
+// Redirect to result.html when "Do Analysis" button is clicked
+analysisButton.addEventListener('click', () => {
+    window.location.href = './result.html'; // Navigate to the results page
+});
+
+    </script>
+</body>
+</html>

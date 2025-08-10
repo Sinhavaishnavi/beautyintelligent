@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Diagnostic</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      height: 100vh;
+      background: linear-gradient(135deg, #f09fc3, #e3b5ca);
+      color: white;
+    }
+
+    header {
+      width: 100%;
+      padding: 20px;
+      background: #ffe8e0;
+      color: black;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .information{
+    background-color: #ffe8e0;
+    color: black;
+    width: 450px;
+    padding: 20px;
+    border: 3px solid black;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .information ul{
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px 0;
+    }
+
+    .information ul li{
+      display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 0.9em;
+    color: #555;
+    border: #000;
+    border-radius: 5px;
+    }
+
+    .information ul li img{
+      width: 70px;
+    height: 60px;
+    margin-right: 10px;
+    border: #000;
+    border-radius: 5px;
+    }
+
+    .capture{
+        background: #ffe8e0;
+        display: flex;
+        justify-content: space-between;
+        border-radius: 15px;
+        border: 3px solid black;
+        height: 67vh;
+        width: 85%;
+        padding: 40px;  
+
+    }
+
+    #video-container {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      border: 3px solid black;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    button {
+      background: rgb(184, 75, 184);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: rgb(184, 75, 184);
+    }
+
+    video {
+      width: 70%;
+      max-width: 1000px;
+      border-radius: 10px;
+      border: 3px solid black;
+      margin: 20px 0;
+      background-color: rgb(24, 23, 23);
+    }
+
+    #captured-image{
+      width: 70%;
+      height: 50vh;
+      border: 3ox solid black;
+    }
+
+    canvas {
+      display: none;
+    }
+
+    p{
+        color: black;
+    }
+
+    footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+  </style>
+</head>
+<body>
+  <header>Welcome to Live Diagnostic Tool</header>
+  <br><br>
+  <section class="information">
+    <h2>Instructions while capturing photo</h2>
+    <ul>
+        <li><img src="./images/icon1.png" alt="Icon"> Remove your glasses and ensure your forehead is visible, with no hair covering it.</li>
+        <li><img src="./images/icon2.png" alt="Icon"> Sit in a well-lit area to ensure clarity.</li>
+        <li><img src="./images/icon3.png" alt="Icon"> Avoid wearing makeup for the most accurate analysis results.</li>
+        <li><img src="./images/icon4.png" alt="Icon"> Face the camera directly and position your face with full coverage of camera</li>
+    </ul>
+  </section>
+  <br><br>
+  <section class="capture">
+  <div id="video-container">
+    <button id="start-camera">Live Diagnostic</button>
+    <video id="video" autoplay></video>
+    <button id="capture-image" style="display:none">Capture Image</button>
+    </div>
+    &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
+    <div>
+    <canvas id="canvas"></canvas>
+    <p>Captured image will appear here</p>
+    <img id="captured-image" style="display: none;" />
+    <br>
+    <button id="capture-image">Upload Image</button>
+  </div>
+  </section>
+
+  <br><Br>
+
+  <footer>
+    &copy; Beautelligent. All rights reserved.
+</footer>
+  
+
+  <script>
+    const startCameraButton = document.getElementById('start-camera');
+    const captureButton = document.getElementById('capture-image');
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const capturedImage = document.getElementById('captured-image');
+    const uploadButton = document.getElementById('upload');
+
+    let videoStream;
+
+    // Start camera and display live video
+    startCameraButton.addEventListener('click', async () => {
+      try {
+        videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = videoStream;
+        startCameraButton.style.display = 'none';
+        captureButton.style.display = 'block';
+      } catch (err) {
+        console.error('Error accessing camera:', err);
+        alert('Unable to access camera. Please check your permissions.');
+      }
+    });
+
+    // Capture the image when button is clicked
+    captureButton.addEventListener('click', () => {
+      const context = canvas.getContext('2d');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      // Convert canvas image to data URL and display it
+      const imageDataURL = canvas.toDataURL('image/png');
+      capturedImage.src = imageDataURL;
+      capturedImage.style.display = 'block';
+    });
+
+    // Stop camera when done (optional, not triggered here)
+    function stopCamera() {
+      if (videoStream) {
+        videoStream.getTracks().forEach(track => track.stop());
+      }
+    }
+            // Upload image
+            uploadButton.addEventListener('click', async () => {
+  const imageData = canvas.toDataURL('image/png'); // Get Base64 data URL
+  console.log('Sending image data:', imageData.substring(0, 100)); // Log first 100 characters
+
+  try {
+    const response = await fetch('http://localhost:3000/upload', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ image: imageData }),
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      alert(`Image uploaded and saved at ${result.filePath}`);
+    } else {
+      console.error('Upload failed:', await response.text());
+      alert('Failed to upload image.');
+    }
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    alert('Error occurred while uploading the image.');
+  }
+});
+
+
+
+  </script>
+</body>
+</html>
