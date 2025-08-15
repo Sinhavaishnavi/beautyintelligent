@@ -5,5 +5,10 @@ pandas==2.1.0
 matplotlib==3.7.1
 scikit-learn==1.2.2
 cv2
+streamlit
+numpy
+pandas
+Pillow
+opencv-python
 
 ...
