@@ -1,10 +1,9 @@
 tensorflow
 keras
 numpy
-panda
+pandas
 matplotlib
 scikit-learn
-cv2
 streamlit
 numpy
 pandas
